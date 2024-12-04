@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+
+    @apply bg-gray-100 dark:bg-gray-950;
+  }
+
+  p,
+  h1,
+  h2,
+  h3,
+  span h4 {
+    @apply text-gray-800 dark:text-gray-200;
+  }
+
+  button {
+    @apply border-gray-800 text-gray-700 dark:text-gray-300 dark:border-gray-200 hover:scale-105 transition-all duration-300;
+  }
+}
