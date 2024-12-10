@@ -3,6 +3,7 @@
 Default permissions for the plugin
 
 - `allow-version`
+- `allow-test`
 
 ## Permission Table
 
@@ -12,6 +13,32 @@ Default permissions for the plugin
 <th>Description</th>
 </tr>
 
+
+<tr>
+<td>
+
+`vector-store:allow-test`
+
+</td>
+<td>
+
+Enables the test command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`vector-store:deny-test`
+
+</td>
+<td>
+
+Denies the test command without any pre-configured scope.
+
+</td>
+</tr>
 
 <tr>
 <td>

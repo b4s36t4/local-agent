@@ -7,6 +7,7 @@ use tauri::{
     plugin::{Builder, TauriPlugin},
     Manager, Runtime,
 };
+use zerocopy::IntoBytes;
 
 mod commands;
 
@@ -35,6 +36,15 @@ impl VectorStore {
 
         return Ok((sqlite_version, vec_version));
     }
+
+    pub fn test(&self, vector: Vec<f32>) -> Result<String> {
+        let connection = self.connection.lock().unwrap();
+        let result: String =
+            connection.query_row("select vec_to_json(?)", [vector.as_bytes()], |result| {
+                Ok(result.get(0)?)
+            })?;
+        Ok(result)
+    }
 }
 
 // Define the plugin config
@@ -47,7 +57,7 @@ pub fn init<R: Runtime>() -> TauriPlugin<R, Config> {
     // Make the plugin config optional
     // by using `Builder::<R, Option<Config>>` instead
     Builder::<R, Config>::new("vector-store")
-        .invoke_handler(tauri::generate_handler![commands::version])
+        .invoke_handler(tauri::generate_handler![commands::version, commands::test])
         .setup(|app, api| {
             println!("{:?}", api.config());
             let path = &api.config().path;

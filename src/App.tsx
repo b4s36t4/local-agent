@@ -42,6 +42,10 @@ function App() {
   const onTest = useCallback(async () => {
     const result = await invoke(COMMANDS.VERSION);
     console.log(result, "Version INFO");
+    const vec = await invoke(COMMANDS.TEST, {
+      vector: [0.1, 0.2, 0.3],
+    });
+    console.log(vec,"ve", typeof vec)
   }, []);
 
   return (

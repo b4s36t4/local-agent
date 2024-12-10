@@ -13,6 +13,7 @@
     "store:default",
     "fs:allow-home-read-recursive",
     "vector-store:allow-version",
+    "vector-store:allow-test",
     {
       "identifier": "fs:allow-home-read-recursive",
       "allow": [

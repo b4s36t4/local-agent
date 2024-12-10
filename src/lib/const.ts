@@ -6,4 +6,5 @@ export const STORE_KEYS = {
 
 export enum COMMANDS {
   VERSION = "plugin:vector-store|version",
+  TEST = "plugin:vector-store|test",
 }
