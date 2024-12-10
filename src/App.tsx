@@ -6,6 +6,9 @@ import { Embedding } from "./lib/embedding";
 import { ProgressCallback } from "@huggingface/transformers";
 
 import "./App.css";
+import { Button } from "./ui/components/Button";
+import { invoke } from "@tauri-apps/api/core";
+import { COMMANDS } from "./lib/const";
 
 function App() {
   const [progress, setProgress] = useState("");
@@ -13,11 +16,12 @@ function App() {
 
   const onEmbedProgress: ProgressCallback = useCallback((info) => {
     if (info.progress) {
-      setProgress(info.progress.toString());
+      setProgress(info.progress.toFixed(2).toString());
     }
     if ((info as any).status === "ready") {
       setEmbedModelLoaded((prev) => {
         if (!prev) {
+          // Bad Practice
           toast("Embedding model loaded!");
           return true;
         }
@@ -35,8 +39,13 @@ function App() {
     Embedding.loadModel(onEmbedProgress);
   }, [onEmbedProgress]);
 
+  const onTest = useCallback(async () => {
+    const result = await invoke(COMMANDS.VERSION);
+    console.log(result, "Version INFO");
+  }, []);
+
   return (
-    <main className="container mx-auto">
+    <main className="container w-full h-screen mx-auto overflow-scroll">
       {!embedModelLoaded && (
         <div className="text-base flex items-center justify-center h-screen font-semibold flex-col">
           <p>Embed model loading</p>
@@ -45,6 +54,7 @@ function App() {
       )}
       {embedModelLoaded && <OnBoarding />}
       <Toaster position="top-right" />
+      <Button onClick={onTest}>Test</Button>
     </main>
   );
 }

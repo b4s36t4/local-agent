@@ -27,7 +27,7 @@ export const indexFile = async (file: string) => {
     if (SKIP_FILES.includes(extension ?? "")) {
       return;
     }
-    // const _content = decoder.decode(fileContent);
+     // const _content = decoder.decode(fileContent);
     // console.log(_content);
     console.log("Embed done for", file);
   } catch (err) {
@@ -43,7 +43,7 @@ export const indexFolder = async (folder: string) => {
     const files = await readDir(folder);
     for (let index = 0; index < files.length; index++) {
       const entry = files[index];
-      const path = await join(folder, entry.name)
+      const path = await join(folder, entry.name);
       if (entry.isFile) {
         await indexFile(path);
       }

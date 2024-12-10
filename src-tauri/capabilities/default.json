@@ -2,7 +2,9 @@
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
   "description": "Capability for the main window",
-  "windows": ["main"],
+  "windows": [
+    "main"
+  ],
   "permissions": [
     "core:default",
     "shell:allow-open",
@@ -10,6 +12,7 @@
     "dialog:default",
     "store:default",
     "fs:allow-home-read-recursive",
+    "vector-store:allow-version",
     {
       "identifier": "fs:allow-home-read-recursive",
       "allow": [

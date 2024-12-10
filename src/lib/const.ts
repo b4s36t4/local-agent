@@ -3,3 +3,7 @@ export const STORE_KEYS = {
   REPO: "repo",
   INDEXES: "index",
 };
+
+export enum COMMANDS {
+  VERSION = "plugin:vector-store|version",
+}
