@@ -1,14 +1,15 @@
 import { useCallback } from "react";
-import { Button } from "../ui/components/Button";
+import { BadgePlus } from "lucide-react";
 import { open } from "@tauri-apps/plugin-dialog";
 import { readDir } from "@tauri-apps/plugin-fs";
 import { toast } from "react-hot-toast";
 import { Store } from "../lib/store";
 import { STORE_KEYS } from "../lib/const";
 import { traverseRepo } from "../lib/file";
+import { Dropdown } from "../ui/components/Dropdown";
 
 export const OnBoarding = () => {
-  const onSelect = useCallback(async () => {
+  const onAddRepo = useCallback(async () => {
     try {
       const folder = await open({ directory: true, multiple: false });
       if (!folder) {
@@ -29,11 +30,26 @@ export const OnBoarding = () => {
   }, []);
 
   return (
-    <div className="flex-col flex items-center justify-center">
-      <p>Please select a Repository to index file</p>
-      <Button onClick={onSelect} className="my-4">
-        Select
-      </Button>
+    <div className="h-screen flex">
+      <div className="w-3/12 border-r-2 border-gray-200 p-2">
+        <div className="flex justify-between items-center font-semibold text-lg mt-4">
+          <p>Your Conversations</p>
+          <Dropdown
+            items={[
+              { id: "new-chat", label: "New Chat", className: "mb-2" },
+              { id: "index-codebase", label: "Add Repo", onClick: onAddRepo },
+            ]}
+          >
+            <BadgePlus />
+          </Dropdown>
+        </div>
+        <div className="mt-6">
+          <p className="text-center">No Previous conversations</p>
+        </div>
+      </div>
+      <div className="w-9/12 p-2">
+        <p>Chat Area</p>
+      </div>
     </div>
   );
 };

@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-query-sql"
+description = "Enables the query_sql command without any pre-configured scope."
+commands.allow = ["query_sql"]
+
+[[permission]]
+identifier = "deny-query-sql"
+description = "Denies the query_sql command without any pre-configured scope."
+commands.deny = ["query_sql"]

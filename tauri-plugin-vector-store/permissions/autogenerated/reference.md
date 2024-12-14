@@ -17,6 +17,58 @@ Default permissions for the plugin
 <tr>
 <td>
 
+`vector-store:allow-execute-sql`
+
+</td>
+<td>
+
+Enables the execute_sql command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`vector-store:deny-execute-sql`
+
+</td>
+<td>
+
+Denies the execute_sql command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`vector-store:allow-query-sql`
+
+</td>
+<td>
+
+Enables the query_sql command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`vector-store:deny-query-sql`
+
+</td>
+<td>
+
+Denies the query_sql command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
 `vector-store:allow-test`
 
 </td>

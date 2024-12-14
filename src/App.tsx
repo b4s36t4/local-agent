@@ -6,13 +6,21 @@ import { Embedding } from "./lib/embedding";
 import { ProgressCallback } from "@huggingface/transformers";
 
 import "./App.css";
+import { useExecuteMigrations } from "./hooks/useExecuteMigrations";
+import { Channel, invoke } from "@tauri-apps/api/core";
 import { Button } from "./ui/components/Button";
-import { invoke } from "@tauri-apps/api/core";
-import { COMMANDS } from "./lib/const";
+
+const channel = new Channel<any>();
+
+channel.onmessage = (response) => {
+  console.log(response, "response");
+};
 
 function App() {
   const [progress, setProgress] = useState("");
-  const [embedModelLoaded, setEmbedModelLoaded] = useState(false);
+  const [embedModelLoaded, setEmbedModelLoaded] = useState(true);
+
+  const { run } = useExecuteMigrations();
 
   const onEmbedProgress: ProgressCallback = useCallback((info) => {
     if (info.progress) {
@@ -23,6 +31,7 @@ function App() {
         if (!prev) {
           // Bad Practice
           toast("Embedding model loaded!");
+          run();
           return true;
         }
         return prev;
@@ -36,17 +45,15 @@ function App() {
       return;
     }
 
-    Embedding.loadModel(onEmbedProgress);
+    // Embedding.loadModel(onEmbedProgress);
   }, [onEmbedProgress]);
 
-  const onTest = useCallback(async () => {
-    const result = await invoke(COMMANDS.VERSION);
-    console.log(result, "Version INFO");
-    const vec = await invoke(COMMANDS.TEST, {
-      vector: [0.1, 0.2, 0.3],
+  const onTest = async () => {
+    const result = await invoke("download", {
+      url: "https://huggingface.co/jinaai/jina-embeddings-v2-base-code/resolve/main/onnx/model_quantized.onnx",
+      onProgress: channel,
     });
-    console.log(vec,"ve", typeof vec)
-  }, []);
+  };
 
   return (
     <main className="container w-full h-screen mx-auto overflow-scroll">

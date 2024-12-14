@@ -5,8 +5,6 @@ import { readDir, readFile } from "@tauri-apps/plugin-fs";
 import { cat } from "@huggingface/transformers";
 import { path } from "@tauri-apps/api";
 
-const decoder = new TextDecoder();
-
 const SKIP_FILES = ["png", "jpeg", "jpg", "webp", "gif"];
 const FOLDERS_TO_SKIP = ["node_modules", ".vscode", "public", "build", "dist"];
 const FILES_TO_SKIP = [
@@ -17,21 +15,61 @@ const FILES_TO_SKIP = [
   "Cargo.lock",
 ];
 
+const decoder = new TextDecoder();
+const _window = window as any;
+
+type ListenerFunction = (body: {
+  file: string;
+  status: "started" | "completed" | "failed";
+  isError?: boolean;
+  isFolder?: boolean;
+  log?: string;
+}) => void;
+
+const getListeners = (): Map<string, ListenerFunction> => {
+  if ((_window as any).listeners) {
+    return _window.listeners;
+  }
+  _window.listeners = new Map();
+  return _window.listeners;
+};
+
+const removeListener = function (this: { id: string }) {
+  getListeners().delete(this.id);
+};
+
+export const addListener = (callback: ListenerFunction) => {
+  const id = window.crypto.randomUUID();
+  getListeners().set(id, callback);
+
+  return removeListener.bind({ id });
+};
 export const indexFile = async (file: string) => {
   if (FILES_TO_SKIP.includes(await path.basename(file))) {
     return;
   }
   try {
-    // const fileContent = await readFile(file);
+    const fileContent = await readFile(file);
     const extension = file.split(".").at(-1);
     if (SKIP_FILES.includes(extension ?? "")) {
       return;
     }
-     // const _content = decoder.decode(fileContent);
-    // console.log(_content);
-    console.log("Embed done for", file);
+    const _content = decoder.decode(fileContent).toString();
   } catch (err) {
     console.log(err);
+  }
+};
+
+const publisLogs = (body: {
+  file: string;
+  status: "completed" | "started" | "failed";
+  isError?: boolean;
+  isFolder?: boolean;
+  log?: string;
+}) => {
+  const listeners = Array.from(getListeners().values());
+  for (const listener of listeners) {
+    listener?.(body);
   }
 };
 
@@ -44,12 +82,28 @@ export const indexFolder = async (folder: string) => {
     for (let index = 0; index < files.length; index++) {
       const entry = files[index];
       const path = await join(folder, entry.name);
-      if (entry.isFile) {
-        await indexFile(path);
+      try {
+        if (entry.isFile) {
+          publisLogs({ file: path, status: "started" });
+          await indexFile(path);
+          publisLogs({ file: path, status: "completed" });
+        }
+      } catch {
+        publisLogs({ file: path, status: "failed" });
       }
-      if (entry.isDirectory) {
-        console.log("Indexing folder", path);
-        await indexFolder(path);
+      try {
+        if (entry.isDirectory) {
+          publisLogs({ isFolder: true, file: path, status: "started" });
+          await indexFolder(path);
+          publisLogs({ isFolder: true, file: path, status: "completed" });
+        }
+      } catch {
+        publisLogs({
+          isFolder: true,
+          file: path,
+          status: "failed",
+          isError: true,
+        });
       }
     }
   } catch {
@@ -63,8 +117,6 @@ export const traverseRepo = async (path?: string) => {
     string,
     any
   >;
-
-  console.log(repo, indexes);
 
   if (path) {
     const repoTree = repo[path];
