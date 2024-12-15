@@ -2,8 +2,8 @@ import { join } from "@tauri-apps/api/path";
 import { STORE_KEYS } from "./const";
 import { Store } from "./store";
 import { readDir, readFile } from "@tauri-apps/plugin-fs";
-import { cat } from "@huggingface/transformers";
 import { path } from "@tauri-apps/api";
+import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 
 const SKIP_FILES = ["png", "jpeg", "jpg", "webp", "gif"];
 const FOLDERS_TO_SKIP = ["node_modules", ".vscode", "public", "build", "dist"];
@@ -44,6 +44,20 @@ export const addListener = (callback: ListenerFunction) => {
 
   return removeListener.bind({ id });
 };
+
+const publisLogs = (body: {
+  file: string;
+  status: "completed" | "started" | "failed";
+  isError?: boolean;
+  isFolder?: boolean;
+  log?: string;
+}) => {
+  const listeners = Array.from(getListeners().values());
+  for (const listener of listeners) {
+    listener?.(body);
+  }
+};
+
 export const indexFile = async (file: string) => {
   if (FILES_TO_SKIP.includes(await path.basename(file))) {
     return;
@@ -56,20 +70,12 @@ export const indexFile = async (file: string) => {
     }
     const _content = decoder.decode(fileContent).toString();
   } catch (err) {
-    console.log(err);
-  }
-};
-
-const publisLogs = (body: {
-  file: string;
-  status: "completed" | "started" | "failed";
-  isError?: boolean;
-  isFolder?: boolean;
-  log?: string;
-}) => {
-  const listeners = Array.from(getListeners().values());
-  for (const listener of listeners) {
-    listener?.(body);
+    publisLogs({
+      file: file,
+      status: "failed",
+      isError: true,
+      log: err as any,
+    });
   }
 };
 
@@ -106,8 +112,14 @@ export const indexFolder = async (folder: string) => {
         });
       }
     }
-  } catch {
-    console.log("Failed to readdir", folder);
+  } catch (err) {
+    publisLogs({
+      file: folder,
+      status: "failed",
+      isError: true,
+      isFolder: true,
+      log: err as any,
+    });
   }
 };
 

@@ -40,7 +40,7 @@ export const OnBoarding = () => {
               { id: "index-codebase", label: "Add Repo", onClick: onAddRepo },
             ]}
           >
-            <BadgePlus />
+            <BadgePlus className="dark:text-gray-200" />
           </Dropdown>
         </div>
         <div className="mt-6">

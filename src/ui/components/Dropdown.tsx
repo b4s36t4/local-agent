@@ -39,7 +39,7 @@ export const Dropdown = ({
       {children}
       <div
         className={clsx(
-          "absolute hidden group-hover:block duration-200 bg-white shadow-lg rounded-md p-3 mt-1 ",
+          "absolute hidden group-hover:block duration-200 bg-white dark:text-gray-200 dark:bg-gray-500 shadow-lg rounded-md p-3 mt-1 ",
           {
             "left-0": position === "bottom-right",
             "right-0": position === "bottom-left",

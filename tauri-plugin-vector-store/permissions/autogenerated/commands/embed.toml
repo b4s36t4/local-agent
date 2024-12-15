@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-embed"
+description = "Enables the embed command without any pre-configured scope."
+commands.allow = ["embed"]
+
+[[permission]]
+identifier = "deny-embed"
+description = "Denies the embed command without any pre-configured scope."
+commands.deny = ["embed"]

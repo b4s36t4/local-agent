@@ -26,6 +26,3 @@ tauri-plugin-fs = "2"
 tauri-plugin-dialog = "2"
 tauri-plugin-store = "2"
 tauri-plugin-vector-store = {path = "../tauri-plugin-vector-store"}
-ort = {version = "=2.0.0-rc.9", features = ["coreml"] }
-curl = "0.4.47"
-tokio = { version = "1.42.0", features = ["fs"] }

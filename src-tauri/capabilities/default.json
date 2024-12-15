@@ -16,6 +16,8 @@
     "vector-store:allow-test",
     "vector-store:allow-execute-sql",
     "vector-store:allow-query-sql",
+    "vector-store:allow-embed",
+    "vector-store:allow-download",
     {
       "identifier": "fs:allow-home-read-recursive",
       "allow": [

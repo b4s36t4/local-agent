@@ -23,6 +23,8 @@ export class Embedding {
   }
 
   static async embed(input: string) {
-    this._pipeline(input, { quantize: true, pooling: "mean" });
+    return await this._pipeline([input], {
+      pooling: "mean",
+    });
   }
 }

@@ -1,3 +1,4 @@
+use embed::Embed;
 use rusqlite::{ffi::sqlite3_auto_extension, Batch, Connection, Error, Result};
 use serde::Deserialize;
 use sqlite_vec::sqlite3_vec_init;
@@ -10,14 +11,16 @@ use tauri::{
 use zerocopy::IntoBytes;
 
 mod commands;
+mod embed;
 mod error;
 
 pub struct VectorStore {
     connection: Mutex<Connection>,
+    embed: Mutex<Embed>,
 }
 
 impl VectorStore {
-    pub fn new<P: AsRef<Path>>(path: P) -> Self {
+    pub fn new<P: AsRef<Path>>(path: P, model_path: P) -> Self {
         unsafe {
             sqlite3_auto_extension(Some(std::mem::transmute(sqlite3_vec_init as *const ())));
         }
@@ -25,8 +28,10 @@ impl VectorStore {
             Connection::open(path.as_ref().to_path_buf()).expect("Unable to open the database");
 
         let _ = db.execute("PRAGMA foreign_keys = ON;", []);
+        let embed = Embed::new(model_path).unwrap();
         Self {
             connection: Mutex::new(db),
+            embed: Mutex::new(embed),
         }
     }
 
@@ -96,13 +101,20 @@ pub fn init<R: Runtime>() -> TauriPlugin<R, Config> {
             commands::version,
             commands::test,
             commands::query_sql,
-            commands::execute_sql
+            commands::execute_sql,
+            embed::download,
+            embed::embed
         ])
         .setup(|app, api| {
             let path = &api.config().path;
             let path_buf = app.path().resolve(path, BaseDirectory::AppData).unwrap();
             fs::create_dir_all(path_buf.clone().parent().unwrap())?;
-            app.manage(VectorStore::new(path_buf));
+            let model_path = app
+                .path()
+                .resolve("onnx/model_quantized.onnx", BaseDirectory::AppData)
+                .unwrap();
+            app.manage(VectorStore::new(path_buf, model_path));
+
             Ok(())
         })
         .build()

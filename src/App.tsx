@@ -3,12 +3,11 @@ import toast, { Toaster } from "react-hot-toast";
 import { OnBoarding } from "./modules/OnBoarding";
 import { Store } from "./lib/store";
 import { Embedding } from "./lib/embedding";
+import { useExecuteMigrations } from "./hooks/useExecuteMigrations";
+import { Channel } from "@tauri-apps/api/core";
 import { ProgressCallback } from "@huggingface/transformers";
 
 import "./App.css";
-import { useExecuteMigrations } from "./hooks/useExecuteMigrations";
-import { Channel, invoke } from "@tauri-apps/api/core";
-import { Button } from "./ui/components/Button";
 
 const channel = new Channel<any>();
 
@@ -18,7 +17,7 @@ channel.onmessage = (response) => {
 
 function App() {
   const [progress, setProgress] = useState("");
-  const [embedModelLoaded, setEmbedModelLoaded] = useState(true);
+  const [embedModelLoaded, setEmbedModelLoaded] = useState(false);
 
   const { run } = useExecuteMigrations();
 
@@ -45,15 +44,8 @@ function App() {
       return;
     }
 
-    // Embedding.loadModel(onEmbedProgress);
-  }, [onEmbedProgress]);
-
-  const onTest = async () => {
-    const result = await invoke("download", {
-      url: "https://huggingface.co/jinaai/jina-embeddings-v2-base-code/resolve/main/onnx/model_quantized.onnx",
-      onProgress: channel,
-    });
-  };
+    Embedding.loadModel(onEmbedProgress);
+  }, [onEmbedProgress, embedModelLoaded]);
 
   return (
     <main className="container w-full h-screen mx-auto overflow-scroll">
@@ -65,7 +57,6 @@ function App() {
       )}
       {embedModelLoaded && <OnBoarding />}
       <Toaster position="top-right" />
-      <Button onClick={onTest}>Test</Button>
     </main>
   );
 }

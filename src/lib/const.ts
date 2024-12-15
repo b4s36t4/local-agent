@@ -10,6 +10,9 @@ export enum COMMANDS {
   QUERY = "plugin:vector-store|query_sql",
   EXECUTE = "plugin:vector-store|execute_sql",
   RUN_MIGRATION = "plugin:vector-store|run_migration",
+  // FORBIDDEN
+  EMBED = "plugin:vector-store|embed",
+  DOWNLOAD = "plugin:vector-store|download",
 }
 
 export enum TABLE_NAMES {

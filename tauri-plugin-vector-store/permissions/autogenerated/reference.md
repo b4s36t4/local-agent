@@ -17,6 +17,58 @@ Default permissions for the plugin
 <tr>
 <td>
 
+`vector-store:allow-download`
+
+</td>
+<td>
+
+Enables the download command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`vector-store:deny-download`
+
+</td>
+<td>
+
+Denies the download command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`vector-store:allow-embed`
+
+</td>
+<td>
+
+Enables the embed command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`vector-store:deny-embed`
+
+</td>
+<td>
+
+Denies the embed command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
 `vector-store:allow-execute-sql`
 
 </td>

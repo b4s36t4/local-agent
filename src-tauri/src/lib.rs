@@ -1,5 +1,3 @@
-use embed::{download};
-
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 mod embed;
 #[tauri::command]
@@ -16,7 +14,6 @@ pub fn run() {
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_vector_store::init())
         .invoke_handler(tauri::generate_handler![greet])
-        .invoke_handler(tauri::generate_handler![download])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
